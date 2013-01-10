@@ -31,13 +31,18 @@ class Configuration_Ini
 		
 		$config = array();
 		
-		ob_start();
-		include("{$path}.ini");
-		$string = ob_get_contents();
-		ob_end_clean();
-		
-		$pairs = parse_ini_string($string);
-		
+		if(function_exists('parse_ini_string')){
+			ob_start();
+			include("{$path}.ini");
+			$string = ob_get_contents();
+			ob_end_clean();
+			
+			$pairs = parse_ini_string($string);
+		}
+		else 
+		{
+			$pairs = parse_ini_file("{$path}.ini");
+		}
 		if ($pairs == false)
 		{
 			throw new Exception("Could not parse configuration file");

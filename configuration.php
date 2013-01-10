@@ -1,4 +1,6 @@
 <?php
+include_once 'configuration/ini.php';
+
 class Configuration
 {
 	protected $_type;
