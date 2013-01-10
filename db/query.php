@@ -376,6 +376,15 @@ class Db_Query
 		return $rows;
 	}
 	
+	public function count()
+	{
+		$this->_fields = array($this->_from => array("COUNT(1)" =>"rows"));
+		
+		$this->limit(1);
+		$row = $this->first();
+		return $row[0]['rows'];
+	}
+	
 	public function __toString()
 	{
 		$sql = $this->_buildSelect();
