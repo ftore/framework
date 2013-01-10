@@ -1,5 +1,6 @@
 <?php
-include_once '';
+include_once dirname(__FILE__) . '/../connector.php';
+include_once dirname(__FILE__) . '/../query/mysql.php';
 
 class Db_Connector_Mysql extends Db_Connector
 {
@@ -25,6 +26,27 @@ class Db_Connector_Mysql extends Db_Connector
 	protected $_engine = 'InnoDB';
 	
 	protected $_isConnected = false;
+	
+	/**
+	 * Constructor
+	 */
+	public function __construct($options)
+	{
+		parent::__construct();
+		
+		if($this->_config['database']['default']['type'] == 'mysql')
+		{
+			$this->_host = $this->_config['database']['default']['host'];
+			$this->_username = $this->_config['database']['default']['username'];
+			$this->_password = $this->_config['database']['default']['password'];
+			$this->_schema = $this->_config['database']['default']['dbname'];
+			$this->_port = $this->_config['database']['default']['port'];
+		}
+		else
+		{
+			throw new Exception('Unsupported db type');
+		}
+	}
 	
 	/**
 	 * Checks if connected to the database

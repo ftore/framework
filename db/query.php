@@ -22,6 +22,17 @@ class Db_Query
 	protected $_where = array();
 	
 	/**
+	 * Constructor
+	 */
+	public function __construct($params = array())
+	{
+		if(array_key_exists('connector', $params))
+		{
+			$this->_connector = $params['connector'];
+		}
+	}
+	
+	/**
 	 * Quotes the value correctly according how
 	 * MySQL will exptect it
 	 */
@@ -332,5 +343,42 @@ class Db_Query
 		$this->_where[] = call_user_func_array("sprintf", $arguments);
 		
 		return $this;
+	}
+	
+	public function first()
+	{
+		$limit = $this->_limit;
+		$offset = $this->_offset;
+		
+		$this->limit(1);
+		
+		$first = $this->all();
+		return $first;
+	}
+	
+	public function all()
+	{
+		$sql = $this->_buildSelect();
+		$result = $this->_connector->execute($sql);
+		
+		if($result === false)
+		{
+			$error = $this->_connector->lastError;
+			throw new Exception('There was an error with your SQL query: ' . $error);
+		}
+		
+		$rows = array();
+		for($i = 0; $i < $result->num_rows; $i++)
+		{
+			$rows[] = $result->fetch_array(MYSQLI_ASSOC);
+		}
+		
+		return $rows;
+	}
+	
+	public function __toString()
+	{
+		$sql = $this->_buildSelect();
+		return $sql;
 	}
 }
